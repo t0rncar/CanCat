@@ -7,7 +7,7 @@ CanCat has two main parts:
 2) Python client to talk to CanCat,
 
 The CAN-transceiver combinations that are currently supported by CanCat are:
-* Arduino with SeeedStudio's CANBUS Shield
+* [Arduino with SeeedStudio's CANBUS Shield](https://www.seeedstudio.com/CAN-BUS-Shield-V2.html)
 * Arduino DUE with Togglebit.net's CAN shield
 * [Macchina M2 (Under-the-Hood)](https://www.macchina.cc/catalog)
 * [Macchina M2 (Under-the-Dash)](https://www.macchina.cc/catalog)
@@ -65,7 +65,11 @@ onto your target device. If you have installed the arguing-cli tool you can
 compile and flash the CanCat firmware with the following steps:
 
 ```
+$ sudo chmod a+rw /dev/ttyACM0 # Quick fix to add permissions
+$ sudo gpasswd --add ${USER} dialout # Better permissions fix
 $ git clone https://github.com/atlas0fd00m/CanCat
+$ cd CanCat
+$ git submodule update --init --recursive 
 $ arduino-cli config init
 $ arduino-cli config add board_manager.additional_urls https://macchina.cc/package_macchina_index.json
 $ arduino-cli lib update-index
@@ -73,8 +77,9 @@ $ arduino-cli lib install due_can
 $ arduino-cli core update-index
 $ arduino-cli core install arduino:sam
 $ arduino-cli core install macchina:sam
-$ cd CanCat/sketches
-$ make m2
+$ cd sketches
+$ make m2 # if using Macchina M2 
+$ make arduino # if using Arduino with SeeedStudio's CANBUS Shield
 ```
 
 7) Ensure that your CAN-transceiver is not in bootloader mode by unplugging its
@@ -115,7 +120,7 @@ you interact with the CanCat tool:
 
 ### Connect to the CAN-transceiver with CanCat [Linux and other systems]:
 ```python
->>> import cancatlib
+>>> import cancatlib as cancat
 
 >>> CANalysis = cancat.CanInterface('/dev/ttyACM0', 115200) # your device may vary
 
